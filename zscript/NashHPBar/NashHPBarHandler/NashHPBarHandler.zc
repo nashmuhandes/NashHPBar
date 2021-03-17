@@ -180,7 +180,7 @@ class NashHPBarHandler : EventHandler
 
 			// retrieve target health
 			int health = prevAimTarget.Health;
-			int maxHealth = prevAimTarget.GetSpawnHealth();
+			int maxHealth = prevAimTarget.GetMaxHealth(true);
 
 			// no need to draw 0 or negative health
 			if (health <= 0) return;
