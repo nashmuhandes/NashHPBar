@@ -1,0 +1,24 @@
+AddOptionMenu "OptionsMenu"
+{
+	StaticText ""
+	StaticText "Nash's HP Bar v1.0"
+	Submenu "$OPTMNU_NASHHPBAR", "NashHPBarOptionMenu"
+}
+
+AddOptionMenu "OptionsMenuSimple"
+{
+	StaticText ""
+	StaticText "Nash's HP Bar v1.0"
+	Submenu "$OPTMNU_NASHHPBAR", "NashHPBarOptionMenu"
+}
+
+OptionMenu "NashHPBarOptionMenu"
+{
+	Class "NashHPBarOptionMenu"
+	Title "$NASHHPBARMNU_TITLE"
+	Position -32
+
+	StaticText ""
+
+	NashHPBarOption "$NASHHPBARMNU_ENABLE", "$NASHHPBARMNU_HELPTEXT_ENABLE", "nashhpbar_enable", "OnOff"
+}

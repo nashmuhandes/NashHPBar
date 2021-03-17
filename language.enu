@@ -1,0 +1,11 @@
+[enu default]
+
+// { ENGLISH (US) LANGUAGE DEFINITION }
+
+OPTMNU_NASHHPBAR = "Customize Nash's HP Bar";
+
+NASHHPBARMNU_TITLE = "Nash's HP Bar Options";
+
+NASHHPBARMNU_ENABLE = "Enable";
+
+NASHHPBARMNU_HELPTEXT_ENABLE = "Enables HP bar.";

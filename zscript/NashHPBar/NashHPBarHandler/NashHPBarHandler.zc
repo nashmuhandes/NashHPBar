@@ -1,0 +1,316 @@
+// Copyright 2021 Nash Muhandes
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The name of the author may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//===========================================================================
+//
+// NashHPBarHandler
+//
+//===========================================================================
+
+class NashHPBarHandler : EventHandler
+{
+	transient CVar cvEnableHPBar;
+	transient ui Actor prevAimTarget;
+	transient ui double healthBarAlpha;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void PlayerEntered(PlayerEvent e)
+	{
+		let pmo = players[e.PlayerNumber].mo;
+		if (pmo)
+		{
+			SetupPlayer(pmo);
+		}
+	}
+
+	override void PlayerRespawned(PlayerEvent e)
+	{
+		let pmo = players[e.PlayerNumber].mo;
+		if (pmo)
+		{
+			ResurrectPlayer(pmo);
+		}
+	}
+
+	override void PlayerDied(PlayerEvent e)
+	{
+	}
+
+	override void PlayerDisconnected(PlayerEvent e)
+	{
+	}
+
+	override void WorldLoaded(WorldEvent e)
+	{
+		CacheCVars();
+	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		if (e.Thing)
+		{
+			// check if the thing has a name colorizer class associated with it
+			class<NashHPBarCustomizer> cls;
+			cls = "NashHPBarCustomizer" .. e.Thing.GetClassName();
+			if (cls)
+			{
+				//Console.PrintF("Giving %s to %s", cls.GetClassName(), e.Thing.GetCharacterName());
+				e.Thing.A_GiveInventory(cls, 1);
+			}
+		}
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void RenderOverlay(RenderEvent e)
+	{
+		DrawNashHPBar(e);
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	void CacheCVars(void)
+	{
+		if (!cvEnableHPBar) cvEnableHPBar = CVar.GetCVar("nashhpbar_enable", players[consoleplayer]);
+		if (!cvEnableHPBar) ThrowAbortException("Cannot cache CVar \"nashhpbar_enable\"!");
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	void SetupPlayer(PlayerPawn pmo)
+	{
+		if (!pmo) return;
+
+		// Enable HP bar plugin
+		let plugin = NashHPBarPlugin.Find(pmo);
+		if (!plugin)
+		{
+			pmo.A_GiveInventory("NashHPBarPlugin");
+		}
+	}
+
+	void ResurrectPlayer(PlayerPawn pmo)
+	{
+		if (!pmo) return;
+		SetupPlayer(pmo);
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	ui void DrawNashHPBar(RenderEvent e)
+	{
+		if (automapactive) return;
+
+		if (!cvEnableHPBar) return;
+		if (cvEnableHPBar && !cvEnableHPBar.GetBool()) return;
+
+		let mnu = Menu.GetCurrentMenu();
+		if (mnu && mnu is "ConversationMenu") return;
+
+		PlayerInfo CPlayer = players[consoleplayer];
+		if (!CPlayer) return;
+
+		PlayerPawn pmo = players[consoleplayer].mo;
+		if (!pmo) return;
+
+		let plugin = NashHPBarPlugin.Find(pmo);
+		if (!plugin) return;
+
+		if (plugin.currentAimTarget && CPlayer.playerstate == PST_LIVE)
+		{
+			prevAimTarget = plugin.currentAimTarget;
+			healthBarAlpha = 1.0;
+		}
+		else
+		{
+			healthBarAlpha *= 0.926;
+		}
+
+		if (prevAimTarget)
+		{
+			// get fonts
+			Font fnt = plugin.GetFont();
+
+			// fonts are invalid, cancel drawing
+			if (!fnt) return;
+
+			// retrieve target health
+			int health = prevAimTarget.Health;
+			int maxHealth = prevAimTarget.GetSpawnHealth();
+
+			// no need to draw 0 or negative health
+			if (health <= 0) return;
+
+			// base Y position of the entire HP bar interface
+			double baseYPos = SmallFont.GetHeight() * con_notifylines;
+
+			// draw HP bar background and border
+			let brdTex = TexMan.CheckForTexture("graphics/HBARBRD.png");
+			if (brdTex.IsValid())
+			{
+				Vector2 brdTexSize = TexMan.GetScaledSize(brdTex);
+				Screen.DrawTexture(brdTex, false,
+					(Screen.GetWidth() / 2) - ((brdTexSize.X / 2) * CleanXFac),
+					((baseYPos - 2.0) * CleanYFac),
+					DTA_CleanNoMove, true,
+					DTA_KeepRatio, true,
+					DTA_Alpha, healthBarAlpha);
+			}
+
+			let bgTex = TexMan.CheckForTexture("graphics/HBARBOT.png");
+			if (bgTex.IsValid())
+			{
+				Vector2 bgTexSize = TexMan.GetScaledSize(bgTex);
+				Screen.DrawTexture(bgTex, false,
+					(Screen.GetWidth() / 2) - ((bgTexSize.X / 2) * CleanXFac),
+					(baseYPos * CleanYFac),
+					DTA_CleanNoMove, true,
+					DTA_KeepRatio, true,
+					DTA_Alpha, healthBarAlpha);
+			}
+
+			String txt;
+
+			// draw health bar
+			let barTex = TexMan.CheckForTexture("graphics/HBARTOP.png");
+			if (barTex.IsValid())
+			{
+				Vector2 barTexSize = TexMan.GetScaledSize(barTex);
+
+				// get the starting X pos to clip to
+				int clipX = (Screen.GetWidth() / 2) - ((int(barTexSize.X) / 2) * CleanXFac);
+
+				// get the full X size of the texture
+				int fullClip = (int(barTexSize.X) * CleanXFac);
+
+				// get health percentage
+				int healthPercent = 100 * health / maxHealth;
+				int maxClip = fullClip * healthPercent / 100;
+
+				// set the clipping
+				clipX += maxClip;
+
+				Screen.DrawTexture(barTex, false,
+					(Screen.GetWidth() / 2) - ((barTexSize.X / 2) * CleanXFac),
+					(baseYPos * CleanYFac),
+					DTA_ClipRight, int(clipX),
+					DTA_CleanNoMove, true,
+					DTA_KeepRatio, true,
+					DTA_Alpha, healthBarAlpha);
+			}
+
+			// get font colours
+			int normalTxtColor = plugin.GetNormalTextColor();
+			int nameTxtColor = normalTxtColor;
+			let cplugin = NashHPBarCustomizer.Find(prevAimTarget);
+			if (cplugin)
+			{
+				// colourize name, if available
+				if (cplugin.GetColor() != Font.CR_UNDEFINED)
+				{
+					nameTxtColor = cplugin.GetColor();
+				}
+				else
+				{
+					nameTxtColor = normalTxtColor;
+				}
+			}
+
+			// draw target name
+			String targName = prevAimTarget.GetCharacterName();
+			if (prevAimTarget is "PlayerPawn")
+			{
+				PlayerInfo plr = prevAimTarget.player;
+				if (plr)
+				{
+					targName = plr.GetUserName();
+				}
+			}
+			txt = String.Format("%s", targName);
+			Screen.DrawText(fnt, nameTxtColor,
+				(Screen.GetWidth() / 2) - ((fnt.StringWidth(txt) / 2) * CleanXFac),
+				(baseYPos * CleanYFac) - (fnt.GetHeight() * CleanYFac) + (1 * CleanYFac),
+				txt,
+				DTA_CleanNoMove, true,
+				DTA_KeepRatio, true,
+				DTA_Alpha, healthBarAlpha);
+
+			// draw target health in numbers
+			txt = String.Format("%d/%d", health, maxHealth);
+			Screen.DrawText(fnt, normalTxtColor,
+				(Screen.GetWidth() / 2) - ((fnt.StringWidth(txt) / 2) * CleanXFac),
+				(baseYPos * CleanYFac) + (fnt.GetHeight() * CleanYFac) - (fnt.GetHeight() * CleanYFac)  + (1 * CleanYFac),
+				txt,
+				DTA_CleanNoMove, true,
+				DTA_KeepRatio, true,
+				DTA_Alpha, healthBarAlpha);
+
+			// draw extra labels if available
+			if (cplugin)
+			{
+				if (cplugin.customLabels.Size() > 0)
+				{
+					double labelYPos = (baseYPos * CleanYFac) + ((fnt.GetHeight() * CleanYFac) * 2);
+					labelYPos += (1 * CleanYFac);
+
+					for (int i = 0; i < cplugin.customLabels.Size(); i++)
+					{
+						Screen.DrawText(fnt, normalTxtColor,
+							(Screen.GetWidth() / 2) - ((fnt.StringWidth(cplugin.customLabels[i]) / 2) * CleanXFac),
+							labelYPos,
+							cplugin.customLabels[i],
+							DTA_CleanNoMove, true,
+							DTA_KeepRatio, true,
+							DTA_Alpha, healthBarAlpha);
+
+						labelYPos += (fnt.GetHeight() * CleanYFac);
+					}
+				}
+			}
+		}
+	}
+}

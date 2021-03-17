@@ -1,0 +1,6 @@
+version "4.5.0"
+
+#include "zscript/NashHPBar/NashHPBarOptionMenu/NashHPBarOptionMenu.zc"
+#include "zscript/NashHPBar/NashHPBarPlugin/NashHPBarPlugin.zc"
+#include "zscript/NashHPBar/NashHPBarHandler/NashHPBarHandler.zc"
+#include "zscript/NashHPBar/NashHPBarCustomizer/NashHPBarCustomizer.zc"
