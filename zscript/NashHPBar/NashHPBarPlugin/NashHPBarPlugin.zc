@@ -50,7 +50,7 @@ class NashHPBarPlugin : Inventory
 	{
 		// Custom HP bar properties
 		// Text color
-		NashHPBarPlugin.TextColor	Font.CR_WHITE;
+		NashHPBarPlugin.TextColor Font.CR_UNDEFINED;
 
 		// Font to use
 		NashHPBarPlugin.HPBarFont "SmallFont";
@@ -96,6 +96,7 @@ class NashHPBarPlugin : Inventory
 
 	clearscope int GetNormalTextColor(void)
 	{
+		if (normalTxtClr == Font.CR_UNDEFINED) return msg0color;
 		return normalTxtClr;
 	}
 
