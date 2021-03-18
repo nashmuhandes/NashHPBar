@@ -32,7 +32,7 @@
 
 class NashHPBarHandler : EventHandler
 {
-	transient CVar cvEnableHPBar;
+	transient ui CVar cvEnableHPBar;
 	transient ui Actor prevAimTarget;
 	transient ui double healthBarAlpha;
 
@@ -68,11 +68,6 @@ class NashHPBarHandler : EventHandler
 	{
 	}
 
-	override void WorldLoaded(WorldEvent e)
-	{
-		CacheCVars();
-	}
-
 	override void WorldThingSpawned(WorldEvent e)
 	{
 		if (e.Thing)
@@ -105,7 +100,7 @@ class NashHPBarHandler : EventHandler
 	//
 	//===========================================================================
 
-	void CacheCVars(void)
+	ui void CacheCVars(void)
 	{
 		if (!cvEnableHPBar) cvEnableHPBar = CVar.GetCVar("nashhpbar_enable", players[consoleplayer]);
 		if (!cvEnableHPBar) ThrowAbortException("Cannot cache CVar \"nashhpbar_enable\"!");
@@ -145,6 +140,7 @@ class NashHPBarHandler : EventHandler
 	{
 		if (automapactive) return;
 
+		CacheCVars();
 		if (!cvEnableHPBar) return;
 		if (cvEnableHPBar && !cvEnableHPBar.GetBool()) return;
 
