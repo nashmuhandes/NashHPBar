@@ -145,7 +145,7 @@ class NashHPBarHandler : EventHandler
 		if (cvEnableHPBar && !cvEnableHPBar.GetBool()) return;
 
 		let mnu = Menu.GetCurrentMenu();
-		if (mnu && mnu is "ConversationMenu") return;
+		if (mnu) return;
 
 		PlayerInfo CPlayer = players[consoleplayer];
 		if (!CPlayer) return;
