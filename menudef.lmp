@@ -1,15 +1,15 @@
 AddOptionMenu "OptionsMenu"
 {
-	StaticText ""
 	StaticText "Nash's HP Bar v1.0"
 	Submenu "$OPTMNU_NASHHPBAR", "NashHPBarOptionMenu"
+	StaticText ""
 }
 
 AddOptionMenu "OptionsMenuSimple"
 {
-	StaticText ""
 	StaticText "Nash's HP Bar v1.0"
 	Submenu "$OPTMNU_NASHHPBAR", "NashHPBarOptionMenu"
+	StaticText ""
 }
 
 OptionMenu "NashHPBarOptionMenu"
