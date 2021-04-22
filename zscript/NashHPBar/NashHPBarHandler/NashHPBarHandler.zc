@@ -145,6 +145,27 @@ class NashHPBarHandler : EventHandler
 	//
 	//===========================================================================
 
+	// taken from GZDoom's vdraw.cpp
+	ui int GetUIScale(int altval)
+	{
+		int scaleval;
+		if (altval > 0) scaleval = altval;
+		else if (uiscale == 0)
+		{
+			// Default should try to scale to 640x400
+			int vscale = Screen.GetHeight() / 400;
+			int hscale =Screen.GetWidth() / 640;
+			scaleval = clamp(vscale, 1, hscale);
+		}
+		else scaleval = uiscale;
+
+		// block scales that result in something larger than the current screen.
+		int vmax =Screen.GetHeight() / 200;
+		int hmax =Screen.GetWidth() / 320;
+		int smax = max(vmax, hmax);
+		return max(1, min(scaleval, smax));
+	}
+
 	ui void DrawNashHPBar(RenderEvent e)
 	{
 		if (automapactive) return;
@@ -191,7 +212,10 @@ class NashHPBarHandler : EventHandler
 			if (health <= 0) return;
 
 			// base Y position of the entire HP bar interface
-			double baseYPos = SmallFont.GetHeight() + (SmallFont.GetHeight() / 4);
+			let scale = GetUIScale(con_scaletext);
+			double baseYPos = (SmallFont.GetHeight() * scale) * con_notifylines;
+			baseYPos /= CleanYfac;
+			baseYPos += SmallFont.GetHeight();
 
 			// draw HP bar background and border
 			let brdTex = TexMan.CheckForTexture("graphics/HBARBRD.png");
