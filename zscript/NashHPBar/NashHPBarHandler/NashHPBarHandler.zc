@@ -284,7 +284,7 @@ class NashHPBarHandler : EventHandler
 			txt = String.Format("%d/%d", health, maxHealth);
 			Screen.DrawText(fnt, normalTxtColor,
 				(Screen.GetWidth() / 2) - ((fnt.StringWidth(txt) / 2) * CleanXFac),
-				(baseYPos * CleanYFac) + (fnt.GetHeight() * CleanYFac) - (fnt.GetHeight() * CleanYFac)  + (1 * CleanYFac),
+				(baseYPos * CleanYFac) + (fnt.GetHeight() * CleanYFac) - (fnt.GetHeight() * CleanYFac) + (1 * CleanYFac),
 				txt,
 				DTA_CleanNoMove, true,
 				DTA_KeepRatio, true,
