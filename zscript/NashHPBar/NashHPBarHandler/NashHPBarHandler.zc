@@ -77,21 +77,6 @@ class NashHPBarHandler : EventHandler
 	{
 	}
 
-	override void WorldThingSpawned(WorldEvent e)
-	{
-		if (e.Thing)
-		{
-			// check if the thing has a name colorizer class associated with it
-			class<NashHPBarCustomizer> cls;
-			cls = "NashHPBarCustomizer" .. e.Thing.GetClassName();
-			if (cls)
-			{
-				//Console.PrintF("Giving %s to %s", cls.GetClassName(), e.Thing.GetCharacterName());
-				e.Thing.A_GiveInventory(cls, 1);
-			}
-		}
-	}
-
 	//===========================================================================
 	//
 	//
@@ -275,19 +260,6 @@ class NashHPBarHandler : EventHandler
 			// get font colours
 			int normalTxtColor = plugin.GetNormalTextColor();
 			int nameTxtColor = normalTxtColor;
-			let cplugin = NashHPBarCustomizer.Find(prevAimTarget);
-			if (cplugin)
-			{
-				// colourize name, if available
-				if (cplugin.GetColor() != Font.CR_UNDEFINED)
-				{
-					nameTxtColor = cplugin.GetColor();
-				}
-				else
-				{
-					nameTxtColor = normalTxtColor;
-				}
-			}
 
 			// draw target name
 			String targName = prevAimTarget.GetCharacterName();
@@ -317,29 +289,6 @@ class NashHPBarHandler : EventHandler
 				DTA_CleanNoMove, true,
 				DTA_KeepRatio, true,
 				DTA_Alpha, healthBarAlpha);
-
-			// draw extra labels if available
-			if (cplugin)
-			{
-				if (cplugin.customLabels.Size() > 0)
-				{
-					double labelYPos = (baseYPos * CleanYFac) + ((fnt.GetHeight() * CleanYFac) * 2);
-					labelYPos += (1 * CleanYFac);
-
-					for (int i = 0; i < cplugin.customLabels.Size(); i++)
-					{
-						Screen.DrawText(fnt, normalTxtColor,
-							(Screen.GetWidth() / 2) - ((fnt.StringWidth(cplugin.customLabels[i]) / 2) * CleanXFac),
-							labelYPos,
-							cplugin.customLabels[i],
-							DTA_CleanNoMove, true,
-							DTA_KeepRatio, true,
-							DTA_Alpha, healthBarAlpha);
-
-						labelYPos += (fnt.GetHeight() * CleanYFac);
-					}
-				}
-			}
 		}
 	}
 }
