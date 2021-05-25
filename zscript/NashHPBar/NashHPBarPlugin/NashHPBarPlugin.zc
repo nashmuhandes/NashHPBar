@@ -50,7 +50,7 @@ class NashHPBarPlugin : Inventory
 	{
 		// Custom HP bar properties
 		// Text color
-		NashHPBarPlugin.TextColor Font.CR_UNDEFINED;
+		NashHPBarPlugin.TextColor Font.CR_WHITE;
 
 		// Font to use
 		NashHPBarPlugin.HPBarFont "SmallFont";
