@@ -1,4 +1,4 @@
-Nash's HP Bar v1.0
+Nash's HP Bar v1.2
 ------------------
 
 Just a HP bar. Nothing else!
