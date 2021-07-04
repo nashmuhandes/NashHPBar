@@ -134,7 +134,7 @@ class NashHPBarPlugin : Inventory
 		if (!Owner) invalidTarget = true;
 		if (!Owner.player) invalidTarget = true;
 		if (!Owner.player.camera) invalidTarget = true;
-		if (invalidTarget == true)
+		if (invalidTarget)
 		{
 			currentAimTarget = NULL;
 			return;
