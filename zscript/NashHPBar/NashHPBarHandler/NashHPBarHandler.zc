@@ -198,9 +198,9 @@ class NashHPBarHandler : EventHandler
 
 			// base Y position of the entire HP bar interface
 			let scale = GetUIScale(con_scaletext);
-			double baseYPos = (SmallFont.GetHeight() * scale) * con_notifylines;
-			baseYPos /= CleanYfac;
-			baseYPos += SmallFont.GetHeight();
+			double baseYPos = (smallfont.GetHeight() * scale) * con_notifylines;
+			baseYPos /= CleanYFac;
+			baseYPos += smallfont.GetHeight();
 
 			// draw HP bar background and border
 			let brdTex = TexMan.CheckForTexture("graphics/HBARBRD.png");
