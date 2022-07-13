@@ -142,9 +142,7 @@ class NashHPBarHandler : EventHandler
 		int scaleval;
 
 		if (altval > 0)
-		{
 			scaleval = altval;
-		}
 		else if (uiscale == 0)
 		{
 			// Default should try to scale to 640x400
