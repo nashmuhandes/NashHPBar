@@ -96,8 +96,11 @@ class NashHPBarHandler : EventHandler
 
 	ui void CacheCVars(void)
 	{
-		if (!cvEnableHPBar) cvEnableHPBar = CVar.GetCVar("nashhpbar_enable", players[consoleplayer]);
-		if (!cvEnableHPBar) ThrowAbortException("Cannot cache CVar \"nashhpbar_enable\"!");
+		if (!cvEnableHPBar)
+			cvEnableHPBar = CVar.GetCVar("nashhpbar_enable", players[consoleplayer]);
+
+		if (!cvEnableHPBar)
+			ThrowAbortException("Cannot cache CVar \"nashhpbar_enable\"!");
 	}
 
 	//===========================================================================
@@ -108,7 +111,8 @@ class NashHPBarHandler : EventHandler
 
 	void SetupPlayer(PlayerPawn pmo)
 	{
-		if (!pmo) return;
+		if (!pmo)
+			return;
 
 		// Enable HP bar plugin
 		let plugin = NashHPBarPlugin.Find(pmo);
@@ -120,7 +124,9 @@ class NashHPBarHandler : EventHandler
 
 	void ResurrectPlayer(PlayerPawn pmo)
 	{
-		if (!pmo) return;
+		if (!pmo)
+			return;
+
 		SetupPlayer(pmo);
 	}
 
@@ -134,7 +140,11 @@ class NashHPBarHandler : EventHandler
 	ui int GetUIScale(int altval)
 	{
 		int scaleval;
-		if (altval > 0) scaleval = altval;
+
+		if (altval > 0)
+		{
+			scaleval = altval;
+		}
 		else if (uiscale == 0)
 		{
 			// Default should try to scale to 640x400
@@ -142,34 +152,45 @@ class NashHPBarHandler : EventHandler
 			int hscale =Screen.GetWidth() / 640;
 			scaleval = clamp(vscale, 1, hscale);
 		}
-		else scaleval = uiscale;
+		else
+		{
+			scaleval = uiscale;
+		}
 
 		// block scales that result in something larger than the current screen.
-		int vmax =Screen.GetHeight() / 200;
-		int hmax =Screen.GetWidth() / 320;
+		int vmax = Screen.GetHeight() / 200;
+		int hmax = Screen.GetWidth() / 320;
 		int smax = max(vmax, hmax);
 		return max(1, min(scaleval, smax));
 	}
 
 	ui void DrawNashHPBar(RenderEvent e)
 	{
-		if (automapactive) return;
+		if (automapactive)
+			return;
 
 		CacheCVars();
-		if (!cvEnableHPBar) return;
-		if (cvEnableHPBar && !cvEnableHPBar.GetBool()) return;
+
+		if (!cvEnableHPBar)
+			return;
+		if (cvEnableHPBar && !cvEnableHPBar.GetBool())
+			return;
 
 		let mnu = Menu.GetCurrentMenu();
-		if (mnu) return;
+		if (mnu)
+			return;
 
 		PlayerInfo CPlayer = players[consoleplayer];
-		if (!CPlayer) return;
+		if (!CPlayer)
+			return;
 
 		PlayerPawn pmo = players[consoleplayer].mo;
-		if (!pmo) return;
+		if (!pmo)
+			return;
 
 		let plugin = NashHPBarPlugin.Find(pmo);
-		if (!plugin) return;
+		if (!plugin)
+			return;
 
 		if (plugin.currentAimTarget && CPlayer.playerstate == PST_LIVE)
 		{
@@ -187,14 +208,16 @@ class NashHPBarHandler : EventHandler
 			Font fnt = plugin.GetFont();
 
 			// fonts are invalid, cancel drawing
-			if (!fnt) return;
+			if (!fnt)
+				return;
 
 			// retrieve target health
 			int health = prevAimTarget.Health;
 			int maxHealth = prevAimTarget.GetMaxHealth(true);
 
 			// no need to draw 0 or negative health
-			if (health <= 0) return;
+			if (health <= 0)
+				return;
 
 			// base Y position of the entire HP bar interface
 			let scale = GetUIScale(con_scaletext);

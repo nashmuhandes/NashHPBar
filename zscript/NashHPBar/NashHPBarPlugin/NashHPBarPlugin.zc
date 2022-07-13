@@ -96,7 +96,9 @@ class NashHPBarPlugin : Inventory
 
 	clearscope int GetNormalTextColor(void)
 	{
-		if (normalTxtClr == Font.CR_UNDEFINED) return msg0color;
+		if (normalTxtClr == Font.CR_UNDEFINED)
+			return msg0color;
+
 		return normalTxtClr;
 	}
 
@@ -117,7 +119,7 @@ class NashHPBarPlugin : Inventory
 		double vh = (cam is "PlayerPawn" && cam.player) ? cam.player.viewheight : cam.CameraHeight;
 		FLineTraceData t;
 		int flags = TRF_SOLIDACTORS;
-		cam.LineTrace(cam.Angle, 0x7FFFFFFF, cam.Pitch, flags, vh, data: t);
+		cam.LineTrace(cam.Angle, 32768., cam.Pitch, flags, vh, data: t);
 		at = t.HitActor;
 
 		if (at != currentAimTarget)
@@ -131,9 +133,12 @@ class NashHPBarPlugin : Inventory
 	void UpdateAimTarget(void)
 	{
 		bool invalidTarget = false;
-		if (!Owner) invalidTarget = true;
-		if (!Owner.player) invalidTarget = true;
-		if (!Owner.player.camera) invalidTarget = true;
+		if (!Owner)
+			invalidTarget = true;
+		if (!Owner.player)
+			invalidTarget = true;
+		if (!Owner.player.camera)
+			invalidTarget = true;
 		if (invalidTarget)
 		{
 			currentAimTarget = NULL;
