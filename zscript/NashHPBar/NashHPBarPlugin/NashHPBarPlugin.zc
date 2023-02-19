@@ -53,7 +53,7 @@ class NashHPBarPlugin : Inventory
 		NashHPBarPlugin.TextColor Font.CR_WHITE;
 
 		// Font to use
-		NashHPBarPlugin.HPBarFont "smallfont";
+		NashHPBarPlugin.HPBarFont "SmallFont";
 
 		Inventory.MaxAmount 1;
 		+Inventory.UNDROPPABLE
